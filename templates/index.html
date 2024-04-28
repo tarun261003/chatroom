@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat Room</title>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var socket = io.connect('http://' + document.domain + ':' + location.port);
+            var room = "Room1"; // Example room. This can be dynamically set.
+            var username = prompt("Enter your username:");
+
+            socket.emit('join', {'username': username, 'room': room});
+
+            $('form').on('submit', function(e) {
+                e.preventDefault();
+                var message = $('#message').val();
+                socket.emit('message', {'msg': message, 'room': room});
+                $('#message').val('');
+            });
+
+            socket.on('message', function(msg) {
+                $('#messages').append('<li>' + msg + '</li>');
+            });
+        });
+    </script>
+</head>
+<body>
+    <ul id="messages"></ul>
+    <form action="">
+        <input id="message" autocomplete="off">
+        <button>Send</button>
+    </form>
+</body>
+</html>
